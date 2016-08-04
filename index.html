@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebChat</title>
+</head>
+<body>
+	
+	<br>
+	%for n, m in messages:
+		<p>
+			<b>{{ n }}</b>:{{ m }}
+		</p>
+	%end
+
+	<form action="/" method="post">
+		Nick: <input name="nick" type="text" />
+        Message: <input name="message" type="text" />
+        <input value="Enviar" type="submit" />
+    </form>
+</body>
+</html>

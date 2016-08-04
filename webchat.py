@@ -1,32 +1,31 @@
-from bottle import route, run, template, request, redirect
+from bottle import route, run, template, request, redirect, view, BaseResponse, BaseRequest, response
 
-messages = ['oi']
-
+messages = [('Admin', 'Welcome')]
 
 @route('/')
+@view('index')
 def index():
-    return str(messages)
-
-
-@route('/new')
-def new():
-    return '''
-        <form action="/new" method="post">
-            Message: <input name="message" type="text" />
-            
-            <input value="Enviar" type="submit" />
-        </form>
-    '''
+    return {'messages': messages}
+ #   nick = request.get_cookie('nick')
+ #   if not nick:
+ #       redirect('/login')
     
-@route('/new', method="POST")
+ #   response.set_cookie('nick', 'joao')
+    
+    
+
+    
+@route('/', method="POST")
 def send():
+    nick = request.forms.get('nick')
     msg = request.forms.get('message')
-    messages.append(msg)
+    messages.append((nick, msg))
     redirect('/')
-    return str(msg)
 
 
-
-
+#@route('/login', method='POST')
+#@view('login')
+#def login():
+#    pass
 
 run(host='localhost', port=8080)
