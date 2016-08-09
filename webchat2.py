@@ -1,17 +1,17 @@
 from bottle import route, run, template, request, redirect, view, BaseResponse, BaseRequest, response, get
-import json
+import requests, json
 
 messages = []
-
-@get('/peers')
-def peers():
-	return json.dumps(messages)
 
 
 @route('/')
 @view('index')
 def index():
-    return {'messages': messages}
+    data = requests.get('http://localhost:8080/peers')
+    decoded = json.loads(data.text)
+    for tupla in decoded: 
+        messages.append(tupla)
+    return {'messages': messages }
     
    
 @route('/', method="POST")
@@ -22,4 +22,4 @@ def send():
     redirect('/')
 
 
-run(host='localhost', port=8080)
+run(host='localhost', port=7070)
