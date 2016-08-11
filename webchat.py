@@ -29,21 +29,21 @@ def index():
 def send():
     nick = request.forms.get('nick')
     msg = request.forms.get('message')
-    messages.append((nick, msg))
+    if [nick, msg] not in messages:
+		messages.append([nick, msg])
     redirect('/')
 
 
 def sync_msgs():
-    time.sleep(6)
+    time.sleep(10)
     while True:
-        print('aqui')
-        time.sleep(2)
-        new_msgs = []
+        time.sleep(3)
         for p in peers:
             r = requests.get(p + '/get_messages')
-            new_msgs = new_msgs + json.loads(r.text)
-
-        messages[:] = messages + new_msgs
+            msgs = json.loads(r.text)
+            for msg in msgs:
+				if msg not in messages:
+					messages.append(msg)
 
 
 def sync_peers():
