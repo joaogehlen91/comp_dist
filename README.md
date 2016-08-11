@@ -1,1 +1,1 @@
-# comp_dist
+# Trabalhos da disciplina de Computação Distribuída
