@@ -7,7 +7,7 @@ import threading
 
 messages = []
 peers = sys.argv[2:]
-
+peer = sys.argv[1]
 
 @get('/get_peers')
 def get_peers():
@@ -16,14 +16,14 @@ def get_peers():
 
 @get('/get_messages')
 def get_messages():
-	return json.dumps(messages)
+	return json.dumps(messages[0:2])
 
 
 @route('/')
 @view('index')
 def index():
-    return {'messages': messages}
-    
+	return {'messages': messages[0:2]}
+
    
 @route('/', method="POST")
 def send():
@@ -31,6 +31,7 @@ def send():
     msg = request.forms.get('message')
     if [nick, msg] not in messages:
 		messages.append([nick, msg])
+		#, dict({peer:clock})
     redirect('/')
 
 
@@ -59,11 +60,11 @@ def sync_peers():
         print(peers)
 
 
-t = threading.Thread(target=sync_peers)
-t.start()
-t2 = threading.Thread(target=sync_msgs)
-t2.start()
+#t = threading.Thread(target=sync_peers)
+#t.start()
+#t2 = threading.Thread(target=sync_msgs)
+#t2.start()
 
 
-
+clock = 0
 run(host='localhost', port=int(sys.argv[1]))
