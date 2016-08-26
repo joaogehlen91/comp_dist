@@ -6,9 +6,9 @@
 <body>
 	
 	<br>
-	%for n, m in messages:
-		<p>
-			<b>{{ n }}</b>:{{ m }}
+    %for m in messages:
+	    <p>
+		    <b>{{ m[0] }}</b>:{{ m[1] }}
 		</p>
 	%end
 

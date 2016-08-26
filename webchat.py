@@ -6,6 +6,7 @@ import requests
 import threading
 
 messages = []
+clock = 1
 peers = sys.argv[2:]
 peer = sys.argv[1]
 
@@ -16,22 +17,23 @@ def get_peers():
 
 @get('/get_messages')
 def get_messages():
-	return json.dumps(messages[0:2])
+	return json.dumps(messages)
 
 
 @route('/')
 @view('index')
 def index():
-	return {'messages': messages[0:2]}
+	return {'messages': messages}
 
    
 @route('/', method="POST")
 def send():
+    global clock
     nick = request.forms.get('nick')
     msg = request.forms.get('message')
     if [nick, msg] not in messages:
-		messages.append([nick, msg])
-		#, dict({peer:clock})
+        messages.append([nick, msg, dict({peer:clock})])
+        clock += 1
     redirect('/')
 
 
@@ -45,6 +47,7 @@ def sync_msgs():
             for msg in msgs:
 				if msg not in messages:
 					messages.append(msg)
+                    #pensar em alguma forma de atualizar dict quando recebe mensagem de outro server
 
 
 def sync_peers():
@@ -66,5 +69,5 @@ def sync_peers():
 #t2.start()
 
 
-clock = 0
+
 run(host='localhost', port=int(sys.argv[1]))
