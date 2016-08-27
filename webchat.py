@@ -32,21 +32,25 @@ def send():
     nick = request.forms.get('nick')
     msg = request.forms.get('message')
     if [nick, msg] not in messages:
-        messages.append([nick, msg, dict({peer:clock})])
+        messages.append([nick, msg, {peer:clock}])
         clock += 1
     redirect('/')
 
 
 def sync_msgs():
     time.sleep(10)
+    global clock
     while True:
         time.sleep(3)
         for p in peers:
             r = requests.get(p + '/get_messages')
             msgs = json.loads(r.text)
             for msg in msgs:
-				if msg not in messages:
-					messages.append(msg)
+                if msg not in messages:
+                    clock += 1
+                    d = dict(msg[2])
+                    d.update({peer:clock})
+                    messages.append([msg[0], msg[1], d])
                     #pensar em alguma forma de atualizar dict quando recebe mensagem de outro server
 
 
@@ -63,10 +67,10 @@ def sync_peers():
         print(peers)
 
 
-#t = threading.Thread(target=sync_peers)
-#t.start()
-#t2 = threading.Thread(target=sync_msgs)
-#t2.start()
+t = threading.Thread(target=sync_peers)
+t.start()
+t2 = threading.Thread(target=sync_msgs)
+t2.start()
 
 
 
