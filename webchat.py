@@ -5,10 +5,12 @@ import time
 import requests
 import threading
 
+
 messages = []
-clock = 1
 peers = sys.argv[2:]
 peer = sys.argv[1]
+clock = {peer: 0}
+
 
 @get('/get_peers')
 def get_peers():
@@ -28,12 +30,13 @@ def index():
    
 @route('/', method="POST")
 def send():
-    global clock
     nick = request.forms.get('nick')
     msg = request.forms.get('message')
     if [nick, msg] not in messages:
-        messages.append([nick, msg, {peer:clock}])
-        clock += 1
+        clock[peer] += 1
+        clock_msg = {}
+        clock_msg[peer] = clock[peer]
+        messages.append([nick, msg, clock_msg])
     redirect('/')
 
 
@@ -67,10 +70,10 @@ def sync_peers():
         print(peers)
 
 
-t = threading.Thread(target=sync_peers)
-t.start()
-t2 = threading.Thread(target=sync_msgs)
-t2.start()
+#t = threading.Thread(target=sync_peers)
+#t.start()
+#t2 = threading.Thread(target=sync_msgs)
+#t2.start()
 
 
 
