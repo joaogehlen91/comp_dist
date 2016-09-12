@@ -9,8 +9,13 @@ import threading
 messages = []
 peers = sys.argv[2:]
 peer = sys.argv[1]
+peer = "http://localhost:"+peer
 clock = {peer: 0}
 
+
+"""
+  verificar com o professor se pode ser passado o tempo do peer por paramatro, para quando identificar um novo peer na rede jah pegar a hora dele.
+"""
 
 @get('/get_peers')
 def get_peers():
