@@ -9,7 +9,7 @@ import threading
 messages = []
 peers = sys.argv[2:]
 peer = sys.argv[1]
-peer = "http://localhost:"+peer
+#peer = "http://localhost:"+peer
 clock = {peer: 0}
 
 
@@ -47,18 +47,14 @@ def send():
 
 def sync_msgs():
     time.sleep(10)
-    global clock
     while True:
         time.sleep(3)
         for p in peers:
-            r = requests.get(p + '/get_messages')
+            r = requests.get('http://localhost:' + p + '/get_messages')
             msgs = json.loads(r.text)
             for msg in msgs:
                 if msg not in messages:
-                    clock += 1
-                    d = dict(msg[2])
-                    d.update({peer:clock})
-                    messages.append([msg[0], msg[1], d])
+                    messages.append([msg[0], msg[1], msg[2]])
                     #pensar em alguma forma de atualizar dict quando recebe mensagem de outro server
 
 
@@ -68,17 +64,17 @@ def sync_peers():
         np = []
         time.sleep(5)
         for p in peers:
-            r = requests.get(p + '/get_peers')
+            r = requests.get('http://localhost:' + p + '/get_peers')
             np = np + json.loads(r.text)
         
         peers[:] = list(set(np + peers))
         print(peers)
 
 
-#t = threading.Thread(target=sync_peers)
-#t.start()
-#t2 = threading.Thread(target=sync_msgs)
-#t2.start()
+t = threading.Thread(target=sync_peers)
+t.start()
+t2 = threading.Thread(target=sync_msgs)
+t2.start()
 
 
 
