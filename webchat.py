@@ -9,13 +9,8 @@ import threading
 messages = []
 peers = sys.argv[2:]
 peer = sys.argv[1]
-#peer = "http://localhost:"+peer
 clock = {peer: 0}
 
-
-"""
-  verificar com o professor se pode ser passado o tempo do peer por paramatro, para quando identificar um novo peer na rede jah pegar a hora dele.
-"""
 
 @get('/get_peers')
 def get_peers():
@@ -47,15 +42,21 @@ def send():
 
 def sync_msgs():
     time.sleep(10)
+    time_peer = 0
     while True:
         time.sleep(3)
         for p in peers:
             r = requests.get('http://localhost:' + p + '/get_messages')
             msgs = json.loads(r.text)
             for msg in msgs:
+                time_peer = msg[2].get(str(p))
                 if msg not in messages:
                     messages.append([msg[0], msg[1], msg[2]])
-                    #pensar em alguma forma de atualizar dict quando recebe mensagem de outro server
+
+            if time_peer:
+                clock.update({p:time_peer})
+        print(clock)
+        # falta pegar incrementar a hora do servidor que RECEBE uma mensagem
 
 
 def sync_peers():
